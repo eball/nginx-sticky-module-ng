@@ -409,7 +409,7 @@ static ngx_int_t ngx_http_get_sticky_peer(ngx_peer_connection_t *pc, void *data)
 	} else {
 		ngx_log_debug(NGX_LOG_DEBUG_HTTP, pc->log, 0, "[sticky/get_sticky_peer] no sticky peer selected, switch back to classic rr");
 
-		if (iphp->sticky_conf->no_fallback || iphp->loc_conf->no_fallback) {
+		if (iphp->rrp.current && (iphp->sticky_conf->no_fallback || iphp->loc_conf->no_fallback)) {
 			ngx_log_error(NGX_LOG_NOTICE, pc->log, 0, "[sticky/get_sticky_peer] No fallback in action !");
 			return NGX_BUSY;
 		}
