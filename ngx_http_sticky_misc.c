@@ -85,6 +85,9 @@ ngx_int_t ngx_http_sticky_misc_set_cookie(ngx_http_request_t *r, ngx_str_t *name
     len += sizeof("; HttpOnly") - 1;
   }
 
+  /* ; SameSite */
+  len += sizeof("; SameSite=None") - 1;
+
   cookie = ngx_pnalloc(r->pool, len);
   if (cookie == NULL) {
     return NGX_ERROR;
@@ -116,6 +119,8 @@ ngx_int_t ngx_http_sticky_misc_set_cookie(ngx_http_request_t *r, ngx_str_t *name
   if (httponly) {
     p = ngx_copy(p, "; HttpOnly", sizeof("; HttpOnly") - 1);
   }
+
+  p = ngx_copy(p, "; SameSite=None", sizeof("; SameSite=None") - 1);
 
   set_cookie = ngx_list_push(&r->headers_out.headers);
   if (set_cookie == NULL) {
