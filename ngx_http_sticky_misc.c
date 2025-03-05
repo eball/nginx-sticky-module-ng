@@ -81,6 +81,9 @@ ngx_int_t ngx_http_sticky_misc_set_cookie(ngx_http_request_t *r, ngx_str_t *name
 
     /* ; SameSite */
     len += sizeof("; SameSite=None") - 1;
+
+    /* ; Partitioned */
+    len += sizeof("; Partitioned") - 1;
   }
 
   /* ; HttpOnly */
@@ -115,6 +118,7 @@ ngx_int_t ngx_http_sticky_misc_set_cookie(ngx_http_request_t *r, ngx_str_t *name
   if (secure) {
     p = ngx_copy(p, "; Secure", sizeof("; Secure") - 1);
     p = ngx_copy(p, "; SameSite=None", sizeof("; SameSite=None") - 1);
+    p = ngx_copy(p, "; Partitioned", sizeof("; Partitioned") - 1);
   }
 
   if (httponly) {
