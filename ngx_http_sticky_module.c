@@ -290,6 +290,20 @@ static ngx_int_t ngx_http_init_sticky_peer(ngx_http_request_t *r, ngx_http_upstr
 				}
 			}
 
+			// search by client remote address hash
+			// if the requet from the safari not chrome
+			if (iphp->request->headers_in.user_agent.len > 0 && 
+				ngx_strnstr(iphp->request->headers_in.user_agent.data, (u_char *)"Safari", iphp->request->headers_in.user_agent.len) != NULL) && 
+				ngx_strnstr(iphp->request->headers_in.user_agent.data, (u_char *)"Chrome", iphp->request->headers_in.user_agent.len) == NULL) {
+					ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" does not match any peer, let's try by client remote address hash", &route);
+					/* get the hash code of the client remote address */
+					// always use peer 1
+					iphp->selected_peer 0;
+					ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" matches peer at index %ui", &route, iphp->selected_peer);						
+					return NGX_OK;
+			}
+
+
 		} else {
 
 			/* switch back to index, just convert to integer and ensure it corresponds to a valid peer */
