@@ -299,7 +299,7 @@ static ngx_int_t ngx_http_init_sticky_peer(ngx_http_request_t *r, ngx_http_upstr
     // search by client remote address hash
     // if the requet from the safari not chrome
     if (iphp->request->headers_in.user_agent->value.len > 0) {
-        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] user agent %V", iphp->request->headers_in.user_agent->value.data);
+        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] user agent %s", iphp->request->headers_in.user_agent->value.data);
     }
     if (iphp->request->headers_in.user_agent->value.len > 0 &&
         ngx_strnstr(iphp->request->headers_in.user_agent->value.data, (char *)"Safari", iphp->request->headers_in.user_agent->value.len) != NULL &&
