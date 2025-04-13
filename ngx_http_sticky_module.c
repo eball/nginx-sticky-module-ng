@@ -277,22 +277,6 @@ static ngx_int_t ngx_http_init_sticky_peer(ngx_http_request_t *r, ngx_http_upstr
                 }
             }
 
-            // search by client remote address hash
-            // if the requet from the safari not chrome
-            if (iphp->request->headers_in.user_agent->value.len > 0) {
-                ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] user agent %V", iphp->request->headers_in.user_agent->value.data);
-            }
-            if (iphp->request->headers_in.user_agent->value.len > 0 &&
-                ngx_strnstr(iphp->request->headers_in.user_agent->value.data, (char *)"Safari", iphp->request->headers_in.user_agent->value.len) != NULL &&
-                ngx_strnstr(iphp->request->headers_in.user_agent->value.data, (char *)"Chrome", iphp->request->headers_in.user_agent->value.len) == NULL) {
-                ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" does not match any peer, let's try by client remote address hash", &route);
-                /* get the hash code of the client remote address */
-                // always use peer 1
-                iphp->selected_peer = 0;
-                ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" matches peer at index %ui", &route, iphp->selected_peer);
-                return NGX_OK;
-            }
-
         } else {
 
             /* switch back to index, just convert to integer and ensure it corresponds to a valid peer */
@@ -309,6 +293,22 @@ static ngx_int_t ngx_http_init_sticky_peer(ngx_http_request_t *r, ngx_http_upstr
 
         /* nothing was found, just continue with rr */
         ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" does not match any peer. Just ignoring it ...", &route);
+        return NGX_OK;
+    }
+
+    // search by client remote address hash
+    // if the requet from the safari not chrome
+    if (iphp->request->headers_in.user_agent->value.len > 0) {
+        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] user agent %V", iphp->request->headers_in.user_agent->value.data);
+    }
+    if (iphp->request->headers_in.user_agent->value.len > 0 &&
+        ngx_strnstr(iphp->request->headers_in.user_agent->value.data, (char *)"Safari", iphp->request->headers_in.user_agent->value.len) != NULL &&
+        ngx_strnstr(iphp->request->headers_in.user_agent->value.data, (char *)"Chrome", iphp->request->headers_in.user_agent->value.len) == NULL) {
+        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" does not match any peer, let's try by client remote address hash", &route);
+        /* get the hash code of the client remote address */
+        // always use peer 1
+        iphp->selected_peer = 0;
+        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, "[sticky/init_sticky_peer] the route \"%V\" matches peer at index %ui", &route, iphp->selected_peer);
         return NGX_OK;
     }
 
